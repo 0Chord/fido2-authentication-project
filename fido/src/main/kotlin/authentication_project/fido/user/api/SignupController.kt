@@ -25,6 +25,6 @@ class SignupController(
         val signupUserDto =
             SignupUserDto(signupUserRequest.email, signupUserRequest.password, signupUserRequest.nickname)
         signupUsecase.signup(signupUserDto)
-        return ResponseEntity.ok(BaseResponse<Unit>(HttpStatus.OK.value(), "OK"))
+        return ResponseEntity.ok(BaseResponse<Unit>(HttpStatus.OK.value(), HttpStatus.OK.reasonPhrase))
     }
 }

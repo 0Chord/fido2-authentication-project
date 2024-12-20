@@ -4,6 +4,7 @@ import authentication_project.fido.common.entity.BaseEntity
 import jakarta.persistence.*
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
+import java.time.LocalDateTime
 
 @Entity
 @Table(
@@ -26,6 +27,8 @@ class User private constructor(
     @NotBlank
     @Column(nullable = false)
     var nickname: String,
+    @Column(name = "last_login_at")
+    var lastLoginAt: LocalDateTime? = null
 ) : BaseEntity() {
 
     companion object {
@@ -51,4 +54,7 @@ class User private constructor(
         return userId.hashCode()
     }
 
+    fun updateLastLoginAt() {
+        this.lastLoginAt = LocalDateTime.now()
+    }
 }

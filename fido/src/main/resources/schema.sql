@@ -8,6 +8,7 @@ CREATE TABLE users
     password   varchar(255) not null,
     created_at datetime     not null,
     updated_at datetime     not null,
+    last_login_at datetime  null,
 
     UNIQUE INDEX idx_user_email(email)
 );
