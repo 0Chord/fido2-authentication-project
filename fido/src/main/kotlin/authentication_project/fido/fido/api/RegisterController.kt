@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @Validated
 @RestController
-@RequestMapping("/attention")
+@RequestMapping("/attestation")
 class RegisterController(
     private val fidoService: FidoService
 ) {
