@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository
 class UserRepositoryImpl(
     private val repository: JpaUserRepository
 ) : UserRepository<User, Long> {
-    override fun insert(t: User) {
+    override fun save(t: User) {
         repository.save(t)
     }
 

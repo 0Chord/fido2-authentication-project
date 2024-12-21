@@ -19,6 +19,6 @@ class SignupService(
     override fun signup(@Valid signupUserDto: SignupUserDto) {
         val encryptedPassword: String = passwordService.encryptPassword(signupUserDto.password)
         val user: User = User.create(signupUserDto.email, encryptedPassword, signupUserDto.nickname)
-        userRepository.insert(user)
+        userRepository.save(user)
     }
 }
