@@ -2,6 +2,7 @@ package authentication_project.fido.user.api
 
 import authentication_project.fido.common.dto.BaseResponse
 import authentication_project.fido.user.dto.LoginRequest
+import authentication_project.fido.user.dto.LoginResponse
 import authentication_project.fido.user.usecase.login.LoginUsecase
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
@@ -18,8 +19,8 @@ class LoginController(
     private val loginUsecase: LoginUsecase
 ) {
     @PostMapping("/login")
-    fun login(@Valid @RequestBody loginRequest: LoginRequest): ResponseEntity<BaseResponse<String>> {
-        val accessToken = loginUsecase.login(loginRequest)
-        return ResponseEntity.ok(BaseResponse<String>(200, "OK", accessToken))
+    fun login(@Valid @RequestBody loginRequest: LoginRequest): ResponseEntity<BaseResponse<LoginResponse>> {
+        val loginResponse: LoginResponse = loginUsecase.login(loginRequest)
+        return ResponseEntity.ok(BaseResponse<LoginResponse>(200, "OK", loginResponse))
     }
 }
