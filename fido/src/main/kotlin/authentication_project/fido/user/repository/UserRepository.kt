@@ -6,6 +6,6 @@ import java.util.Optional
 @Repository
 interface UserRepository<T, TID> {
     fun insert(t: T): Unit
-    fun findById(uid: TID): Optional<T>
-    fun findByEmail(email:String): Optional<T>
+    fun findById(uid: TID): T?
+    fun findByEmail(email:String): T?
 }

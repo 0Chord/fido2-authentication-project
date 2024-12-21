@@ -2,7 +2,6 @@ package authentication_project.fido.user.repository
 
 import authentication_project.fido.user.domain.User
 import org.springframework.stereotype.Repository
-import java.util.*
 
 @Repository
 class UserRepositoryImpl(
@@ -12,11 +11,11 @@ class UserRepositoryImpl(
         repository.save(t)
     }
 
-    override fun findById(uid: Long): Optional<User> {
-        return repository.findById(uid)
+    override fun findById(uid: Long): User? {
+        return repository.findById(uid).orElse(null)
     }
 
-    override fun findByEmail(email: String): Optional<User> {
+    override fun findByEmail(email: String): User? {
         return repository.findByEmail(email)
     }
 }

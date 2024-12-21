@@ -6,13 +6,13 @@ import jakarta.validation.constraints.NotBlank
 
 data class SignupUserRequest(
     @Email
-    var email: String,
+    val email: String,
     @NotBlank
-    var password: String,
+    val password: String,
     @NotBlank
-    var rePassword: String,
+    val rePassword: String,
     @NotBlank
-    var nickname: String
+    val nickname: String
 ){
     fun checkPassword() {
         if (password != rePassword) {
