@@ -13,6 +13,7 @@ import authentication_project.fido.user.domain.User
 import authentication_project.fido.user.repository.UserRepository
 import com.webauthn4j.WebAuthnManager
 import com.webauthn4j.data.PublicKeyCredentialType
+import com.webauthn4j.data.RegistrationData
 import com.webauthn4j.data.RegistrationParameters
 import com.webauthn4j.data.RegistrationRequest
 import com.webauthn4j.data.attestation.statement.COSEAlgorithmIdentifier
@@ -49,7 +50,7 @@ class AttestationService(
         return ServerPublicKeyCredentialCreationOptionsResponse(
             status = "ok",
             errorMessage = "",
-            rp = RpEntityResponse("fido"),
+            rp = RpEntityResponse("localhost"),
             user = UserResponse(Base64.getEncoder().encodeToString(userHandle), user.email, user.nickname),
             challenge = Base64.getEncoder().encodeToString(challenge),
             pubKeyCredParams = listOf(
@@ -71,25 +72,28 @@ class AttestationService(
         val attestationObject = Base64.getDecoder().decode(request.response.attestationObject)
         val clientDataJSON = Base64.getDecoder().decode(request.response.clientDataJSON)
         val accessToken = httpRequest.getHeader("Authorization").split(" ")[1]
+
         val userId: Long = tokenProvider.getUserId(accessToken)
 
-        val attestationData = webAuthnManager.parse(
+        val registrationData: RegistrationData = webAuthnManager.parse(
             RegistrationRequest(
-                clientDataJSON,
-                attestationObject
+                attestationObject,
+                clientDataJSON
+
             )
         )
+
         val challenge =
             challengeRepository.findByUserId(userId) ?: throw NotFoundChallengeException("해당하는 Challenge를 찾을 수 없습니다")
         val findUser = userRepository.findById(userId) ?: throw NotFoundUserException("해당하는 유저를 찾을 수 없습니다")
 
-        val origin = Origin("http://localhost:8080")
+        val origin = Origin("http://localhost:3000")
         val challengeValue = challenge.challenge
         val challengeObject = Challenge { challengeValue }
 
         val serverProperty = ServerProperty(
             origin,
-            "fido",
+            "localhost",
             challengeObject
         )
 
@@ -107,7 +111,7 @@ class AttestationService(
         )
 
         try {
-            val response = webAuthnManager.verify(attestationData, registrationParameters)
+            val response = webAuthnManager.verify(registrationData, registrationParameters)
 
             val authenticatorEntity = AuthenticatorEntity.create(
                 userId = findUser.userId,
@@ -121,6 +125,7 @@ class AttestationService(
             challengeRepository.deleteByUserId(findUser.userId)
             return ServerResponse("ok","")
         } catch (e: VerificationException) {
+            println(e)
             throw WebAuthnVerificationException("WebAuthn Verification 실패")
         }
     }
