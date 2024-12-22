@@ -16,10 +16,10 @@ class WebConfig(
     override fun addInterceptors(registry: InterceptorRegistry) {
         registry.addInterceptor(JwtTokenCommonVerifyInterceptor(tokenProvider))
             .addPathPatterns("/**")
-            .excludePathPatterns("/user/login", "/user/signup")
+            .excludePathPatterns("/user/login", "/user/signup","/attestation/**")
 
         registry.addInterceptor(JwtTokenDetailVerifyInterceptor(tokenProvider, objectMapper))
             .addPathPatterns("/**")
-            .excludePathPatterns("/user/login", "/user/signup")
+            .excludePathPatterns("/user/login", "/user/signup","/attestation/**")
     }
 }

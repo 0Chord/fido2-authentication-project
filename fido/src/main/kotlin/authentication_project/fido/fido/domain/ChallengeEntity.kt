@@ -8,7 +8,7 @@ import jakarta.persistence.Table
 
 @Entity
 @Table(name = "challenges")
-class Challenge private constructor(
+class ChallengeEntity private constructor(
     @Id
     @Column(name = "user_id")
     val userId: Long,
@@ -17,8 +17,8 @@ class Challenge private constructor(
 ) : BaseEntity() {
 
     companion object {
-        fun create(userId: Long, challenge: ByteArray): Challenge {
-            return Challenge(
+        fun create(userId: Long, challenge: ByteArray): ChallengeEntity {
+            return ChallengeEntity(
                 userId = userId,
                 challenge = challenge
             )
@@ -29,7 +29,7 @@ class Challenge private constructor(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as Challenge
+        other as ChallengeEntity
 
         return userId == other.userId
     }
