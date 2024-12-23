@@ -7,15 +7,19 @@ import org.springframework.stereotype.Repository
 class AuthenticatorRepositoryImpl(
     private val repository: JpaAuthenticatorRepository
 ):AuthenticatorRepository<AuthenticatorEntity,Long> {
-    override fun deleteByUserId(tid: Long) {
-       repository.deleteById(tid)
+    override fun deleteByUserId(userId: Long) {
+       repository.deleteById(userId)
     }
 
     override fun save(t: AuthenticatorEntity) {
         repository.save(t)
     }
 
-    override fun findByUserId(tid: Long): AuthenticatorEntity? {
-        return repository.findById(tid).orElse(null)
+    override fun deleteById(tid: Long) {
+        repository.deleteById(tid)
+    }
+
+    override fun findByUserId(userId: Long): AuthenticatorEntity? {
+        return repository.findById(userId).orElse(null)
     }
 }
