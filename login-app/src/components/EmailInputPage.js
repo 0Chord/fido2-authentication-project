@@ -1,57 +1,25 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Key, Fingerprint } from 'lucide-react';
 import useUserStore from '../stores/useUserStore';
 
-const LoginPage = () => {
+const EmailInputPage = () => {
   const navigate = useNavigate();
-  const setUserInfo = useUserStore((state) => state.setUserInfo);
+  const setEmail = useUserStore((state) => state.setTempEmail);
 
-  const [loginData, setLoginData] = useState({
-    email: '',
-    password: ''
-  });
+  const [emailInput, setEmailInput] = useState('');
   const [error, setError] = useState('');
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setLoginData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
-    try {
-      const response = await fetch('/user/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify(loginData)
-      });
-
-      const data = await response.json();
-
-      if (response.ok && data.resultCode === 200) {
-        setUserInfo(data.resultData);
-
-        navigate('/mypage');
-      } else {
-        setError(data.resultMessage || '로그인에 실패했습니다');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      setError('서버 통신 중 오류가 발생했습니다');
+    if (!emailInput.includes('@')) {
+      setError('유효한 이메일을 입력해주세요');
+      return;
     }
-  };
 
-  const handleFIDOLogin = () => {
-    console.log('FIDO login attempted');
+    setEmail(emailInput);
+    navigate('/auth');
   };
 
   return (
@@ -63,7 +31,7 @@ const LoginPage = () => {
       </div>
 
       <div className="flex-1 px-4 py-6">
-        <form className="space-y-4" onSubmit={handleLogin}>
+        <form className="space-y-4" onSubmit={handleSubmit}>
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg">
               {error}
@@ -76,28 +44,12 @@ const LoginPage = () => {
             </label>
             <input
               id="email"
-              name="email"
               type="email"
               required
               className="block w-full px-4 py-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-              value={loginData.email}
-              onChange={handleInputChange}
+              value={emailInput}
+              onChange={(e) => setEmailInput(e.target.value)}
               placeholder="example@email.com"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="password" className="block text-base font-medium text-gray-700 mb-1">
-              비밀번호
-            </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              required
-              className="block w-full px-4 py-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-              value={loginData.password}
-              onChange={handleInputChange}
             />
           </div>
 
@@ -105,18 +57,9 @@ const LoginPage = () => {
             type="submit"
             className="mt-6 w-full flex items-center justify-center px-4 py-3 border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
-            <Key className="h-6 w-6 mr-2" />
-            로그인
+            다음
           </button>
         </form>
-
-        <button
-          onClick={handleFIDOLogin}
-          className="mt-4 w-full flex items-center justify-center px-4 py-3 border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-        >
-          <Fingerprint className="h-6 w-6 mr-2" />
-          FIDO 로그인
-        </button>
 
         <button
           onClick={() => navigate('/signup')}
@@ -135,4 +78,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default EmailInputPage;

@@ -8,6 +8,10 @@ const useUserStore = create(
       userId: null,
       email: null,
       nickname: null,
+      tempEmail: null,
+
+      setTempEmail: (email) => set({ tempEmail: email }),
+      clearTempEmail: () => set({ tempEmail: null }),
 
       setUserInfo: (userData) =>
         set({
@@ -15,6 +19,7 @@ const useUserStore = create(
           userId: userData.userId,
           email: userData.email,
           nickname: userData.nickname,
+          tempEmail: null,
         }),
 
       clearUserInfo: () =>
@@ -23,6 +28,7 @@ const useUserStore = create(
           userId: null,
           email: null,
           nickname: null,
+          tempEmail: null,
         }),
     }),
     {
