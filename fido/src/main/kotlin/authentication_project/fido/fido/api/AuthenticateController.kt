@@ -1,7 +1,9 @@
 package authentication_project.fido.fido.api
 
+import authentication_project.fido.fido.dto.AuthenticationServerPublicKeyCredential
 import authentication_project.fido.fido.dto.AuthenticationServerPublicKeyCredentialGetOptionsRequest
 import authentication_project.fido.fido.dto.AuthenticationServerPublicKeyCredentialGetOptionsResponse
+import authentication_project.fido.fido.dto.ServerResponse
 import authentication_project.fido.fido.usecase.AssertionService
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
@@ -23,5 +25,11 @@ class AuthenticateController(
         val creationOptions =
             assertionService.createCredentialCreationOptions(authenticationServerPublicKeyCredentialGetOptionsRequest)
         return ResponseEntity.ok().body(creationOptions)
+    }
+
+    @PostMapping("/result")
+    fun authenticateResult(@Valid @RequestBody authenticationServerPublicKeyCredential: AuthenticationServerPublicKeyCredential): ResponseEntity<ServerResponse> {
+        val serverResponse = assertionService.verifyAssertion(authenticationServerPublicKeyCredential)
+        return ResponseEntity.ok().body(serverResponse)
     }
 }

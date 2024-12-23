@@ -23,6 +23,7 @@ import com.webauthn4j.server.ServerProperty
 import com.webauthn4j.verifier.exception.VerificationException
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.nio.ByteBuffer
 import java.security.SecureRandom
 import java.util.*
@@ -36,6 +37,7 @@ class AttestationService(
 ) {
     private val webAuthnManager = WebAuthnManager.createNonStrictWebAuthnManager()
 
+    @Transactional
     fun createCredentialCreationOptions(request: ServerPublicKeyCredentialCreationOptionsRequest): ServerPublicKeyCredentialCreationOptionsResponse {
         val user = userRepository.findByEmail(request.username) ?: throw NotFoundUserException("해당하는 유저를 찾을 수 없습니다")
 
@@ -51,7 +53,7 @@ class AttestationService(
             status = "ok",
             errorMessage = "",
             rp = RpEntityResponse("localhost"),
-            user = UserResponse(Base64.getEncoder().encodeToString(userHandle), user.email, user.nickname),
+            user = UserResponse(Base64.getUrlEncoder().encodeToString(userHandle), user.email, user.nickname),
             challenge = Base64.getEncoder().encodeToString(challenge),
             pubKeyCredParams = listOf(
                 PublicKeyCredentialParameters("public-key", -7)
@@ -67,8 +69,8 @@ class AttestationService(
         )
     }
 
+    @Transactional
     fun verifyAttestation(request: ServerPublicKeyCredential, httpRequest: HttpServletRequest): ServerResponse {
-
         val attestationObject = Base64.getDecoder().decode(request.response.attestationObject)
         val clientDataJSON = Base64.getDecoder().decode(request.response.clientDataJSON)
         val accessToken = httpRequest.getHeader("Authorization").split(" ")[1]
@@ -115,7 +117,7 @@ class AttestationService(
 
             val authenticatorEntity = AuthenticatorEntity.create(
                 userId = findUser.userId,
-                credentialId = Base64.getEncoder()
+                credentialId = Base64.getUrlEncoder()
                     .encodeToString(response.attestationObject?.authenticatorData?.attestedCredentialData?.credentialId),
                 publicKey = response.attestationObject?.authenticatorData?.attestedCredentialData?.coseKey?.publicKey?.encoded,
                 signCount = response.attestationObject?.authenticatorData?.signCount ?: 0

@@ -16,8 +16,8 @@ class AuthenticatorEntity private constructor(
     @Column(name = "public_key")
     val publicKey: ByteArray?,
     @Column(name = "sign_count")
-    val signCount: Long
-):BaseEntity() {
+    var signCount: Long
+) : BaseEntity() {
     companion object {
         fun create(userId: Long, credentialId: String, publicKey: ByteArray?, signCount: Long): AuthenticatorEntity {
             return AuthenticatorEntity(
@@ -42,5 +42,7 @@ class AuthenticatorEntity private constructor(
         return authenticatorId.hashCode()
     }
 
-
+    fun updateSignCount(count : Long) {
+        this.signCount = count
+    }
 }
