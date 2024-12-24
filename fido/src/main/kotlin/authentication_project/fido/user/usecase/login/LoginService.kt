@@ -22,7 +22,7 @@ class LoginService(
         userRepository.findByEmail(loginRequest.email)?.let { findUser: User ->
             passwordService.verifyPassword(findUser.password, loginRequest.password)
             findUser.updateLastLoginAt()
-            val accessToken = tokenProvider.createToken(findUser.userId, findUser.email)
+            val accessToken = tokenProvider.createToken(findUser.userId)
             return LoginResponse(accessToken, findUser.userId, findUser.email, findUser.nickname)
         } ?: throw NotFoundUserException("해당하는 유저를 찾을 수 없습니다")
     }
